@@ -32,5 +32,21 @@ public class ChatBot {
         for (int i = 0; i <= number; i++) {
             System.out.println(i + "!");
         }
+
+        System.out.println("Which keyword is used to create a class in Java?");
+        System.out.println("1. function");
+        System.out.println("2. class");
+        System.out.println("3. create");
+        System.out.println("4. new");
+
+        int answer = scanner.nextInt();
+
+        while (answer != 2) {
+            System.out.println("Wrong");
+            answer = scanner.nextInt();
+        }
+
+        System.out.println("Correct");
+        System.out.println("Goodbye, have a nice day!");
     }
 }
