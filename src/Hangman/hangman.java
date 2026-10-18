@@ -9,23 +9,45 @@ public class hangman {
         Random random = new Random();
 
         System.out.println("HANGMAN");
+        System.out.println();
 
         String[] words = {"python", "java", "javascript", "kotlin"};
         String word = words[random.nextInt(words.length)];
 
-        String hint = word.substring(0, 2);
+        char[] hiddenWord = new char[word.length()];
 
-        for (int i = 2; i < word.length(); i++) {
-            hint += "-";
+        for (int i = 0; i < hiddenWord.length; i++) {
+            hiddenWord[i] = '-';
         }
 
-        System.out.print("Guess the word " + hint + ": ");
-        String answer = scanner.nextLine();
+        int attempts = 8;
 
-        if (answer.equals(word)) {
-            System.out.println("You survived!");
-        } else {
-            System.out.println("You lost!");
+        while (attempts > 0) {
+            System.out.println();
+            System.out.println(new String(hiddenWord));
+            System.out.print("Input a letter: ");
+
+            String input = scanner.nextLine();
+            char letter = input.charAt(0);
+
+            boolean found = false;
+
+            for (int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == letter) {
+                    hiddenWord[i] = letter;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                System.out.println("That letter doesn't appear in the word");
+            }
+
+            attempts--;
         }
+
+        System.out.println();
+        System.out.println("Thanks for playing!");
+        System.out.println("We'll see how well you did in the next stage");
     }
 }
