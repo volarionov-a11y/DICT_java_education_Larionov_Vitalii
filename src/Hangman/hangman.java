@@ -22,7 +22,7 @@ public class hangman {
 
         int attempts = 8;
 
-        while (attempts > 0) {
+        while (attempts > 0 && !new String(hiddenWord).equals(word)) {
             System.out.println();
             System.out.println(new String(hiddenWord));
             System.out.print("Input a letter: ");
@@ -30,24 +30,35 @@ public class hangman {
             String input = scanner.nextLine();
             char letter = input.charAt(0);
 
-            boolean found = false;
+            boolean letterExists = false;
+            boolean improved = false;
 
             for (int i = 0; i < word.length(); i++) {
                 if (word.charAt(i) == letter) {
-                    hiddenWord[i] = letter;
-                    found = true;
+                    letterExists = true;
+
+                    if (hiddenWord[i] == '-') {
+                        hiddenWord[i] = letter;
+                        improved = true;
+                    }
                 }
             }
 
-            if (!found) {
+            if (!letterExists) {
                 System.out.println("That letter doesn't appear in the word");
+                attempts--;
+            } else if (!improved) {
+                System.out.println("No improvements");
+                attempts--;
             }
-
-            attempts--;
         }
 
-        System.out.println();
-        System.out.println("Thanks for playing!");
-        System.out.println("We'll see how well you did in the next stage");
+        if (new String(hiddenWord).equals(word)) {
+            System.out.println();
+            System.out.println("You guessed the word!");
+            System.out.println("You survived!");
+        } else {
+            System.out.println("You lost!");
+        }
     }
 }
