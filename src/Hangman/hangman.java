@@ -11,10 +11,15 @@ public class hangman {
         System.out.println("HANGMAN");
 
         String[] words = {"python", "java", "javascript", "kotlin"};
-
         String word = words[random.nextInt(words.length)];
 
-        System.out.print("Guess the word: ");
+        String hint = word.substring(0, 2);
+
+        for (int i = 2; i < word.length(); i++) {
+            hint += "-";
+        }
+
+        System.out.print("Guess the word " + hint + ": ");
         String answer = scanner.nextLine();
 
         if (answer.equals(word)) {
