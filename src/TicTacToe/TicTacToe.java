@@ -5,26 +5,15 @@ import java.util.Scanner;
 public class TicTacToe {
 
     private char[][] board;
+    private char currentPlayer;
 
-    public TicTacToe(String cells) {
+    public TicTacToe() {
         board = new char[3][3];
-        fillBoard(cells);
-    }
-
-    private void fillBoard(String cells) {
-        int index = 0;
+        currentPlayer = 'X';
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
-                char symbol = cells.charAt(index);
-
-                if (symbol == '_') {
-                    board[row][column] = ' ';
-                } else {
-                    board[row][column] = symbol;
-                }
-
-                index++;
+                board[row][column] = ' ';
             }
         }
     }
@@ -45,7 +34,7 @@ public class TicTacToe {
         System.out.println("---------");
     }
 
-    public void makeMove(Scanner scanner) {
+    private void makeMove(Scanner scanner) {
 
         while (true) {
             System.out.print("Enter the coordinates: ");
@@ -82,23 +71,92 @@ public class TicTacToe {
                 continue;
             }
 
-            board[row][column] = 'X';
+            board[row][column] = currentPlayer;
             break;
         }
     }
 
-    public static void main(String[] args) {
+    private boolean hasWinner(char player) {
+
+        for (int row = 0; row < 3; row++) {
+            if (board[row][0] == player &&
+                    board[row][1] == player &&
+                    board[row][2] == player) {
+                return true;
+            }
+        }
+
+        for (int column = 0; column < 3; column++) {
+            if (board[0][column] == player &&
+                    board[1][column] == player &&
+                    board[2][column] == player) {
+                return true;
+            }
+        }
+
+        if (board[0][0] == player &&
+                board[1][1] == player &&
+                board[2][2] == player) {
+            return true;
+        }
+
+        if (board[0][2] == player &&
+                board[1][1] == player &&
+                board[2][0] == player) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isDraw() {
+
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 3; column++) {
+                if (board[row][column] == ' ') {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private void switchPlayer() {
+        if (currentPlayer == 'X') {
+            currentPlayer = 'O';
+        } else {
+            currentPlayer = 'X';
+        }
+    }
+
+    public void play() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter cells: ");
-        String cells = scanner.nextLine();
+        printBoard();
 
-        TicTacToe game = new TicTacToe(cells);
+        while (true) {
 
-        game.printBoard();
+            makeMove(scanner);
 
-        game.makeMove(scanner);
+            printBoard();
 
-        game.printBoard();
+            if (hasWinner(currentPlayer)) {
+                System.out.println(currentPlayer + " wins");
+                break;
+            }
+
+            if (isDraw()) {
+                System.out.println("Draw");
+                break;
+            }
+
+            switchPlayer();
+        }
+    }
+
+    public static void main(String[] args) {
+        TicTacToe game = new TicTacToe();
+        game.play();
     }
 }
