@@ -29,13 +29,106 @@ public class TicTacToe {
             System.out.print("| ");
 
             for (int column = 0; column < 3; column++) {
-                System.out.print(board[row][column] + " ");
+                char cell = board[row][column];
+
+                if (cell == '_') {
+                    System.out.print("  ");
+                } else {
+                    System.out.print(cell + " ");
+                }
             }
 
             System.out.println("|");
         }
 
         System.out.println("---------");
+    }
+
+    private int countSymbol(char symbol) {
+        int count = 0;
+
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 3; column++) {
+                if (board[row][column] == symbol) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private boolean hasWinner(char symbol) {
+
+        for (int row = 0; row < 3; row++) {
+            if (board[row][0] == symbol &&
+                    board[row][1] == symbol &&
+                    board[row][2] == symbol) {
+                return true;
+            }
+        }
+
+        for (int column = 0; column < 3; column++) {
+            if (board[0][column] == symbol &&
+                    board[1][column] == symbol &&
+                    board[2][column] == symbol) {
+                return true;
+            }
+        }
+
+        if (board[0][0] == symbol &&
+                board[1][1] == symbol &&
+                board[2][2] == symbol) {
+            return true;
+        }
+
+        if (board[0][2] == symbol &&
+                board[1][1] == symbol &&
+                board[2][0] == symbol) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasEmptyCells() {
+
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 3; column++) {
+                if (board[row][column] == '_') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public String getGameState() {
+
+        int xCount = countSymbol('X');
+        int oCount = countSymbol('O');
+
+        boolean xWins = hasWinner('X');
+        boolean oWins = hasWinner('O');
+
+        if (Math.abs(xCount - oCount) >= 2 || (xWins && oWins)) {
+            return "Impossible";
+        }
+
+        if (xWins) {
+            return "X wins";
+        }
+
+        if (oWins) {
+            return "O wins";
+        }
+
+        if (hasEmptyCells()) {
+            return "Game not finished";
+        }
+
+        return "Draw";
     }
 
     public static void main(String[] args) {
@@ -47,5 +140,8 @@ public class TicTacToe {
         TicTacToe game = new TicTacToe(cells);
 
         game.printBoard();
+
+        System.out.println(game.getGameState());
     }
+
 }
