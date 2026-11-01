@@ -16,7 +16,14 @@ public class TicTacToe {
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
-                board[row][column] = cells.charAt(index);
+                char symbol = cells.charAt(index);
+
+                if (symbol == '_') {
+                    board[row][column] = ' ';
+                } else {
+                    board[row][column] = symbol;
+                }
+
                 index++;
             }
         }
@@ -29,13 +36,7 @@ public class TicTacToe {
             System.out.print("| ");
 
             for (int column = 0; column < 3; column++) {
-                char cell = board[row][column];
-
-                if (cell == '_') {
-                    System.out.print("  ");
-                } else {
-                    System.out.print(cell + " ");
-                }
+                System.out.print(board[row][column] + " ");
             }
 
             System.out.println("|");
@@ -44,91 +45,46 @@ public class TicTacToe {
         System.out.println("---------");
     }
 
-    private int countSymbol(char symbol) {
-        int count = 0;
+    public void makeMove(Scanner scanner) {
 
-        for (int row = 0; row < 3; row++) {
-            for (int column = 0; column < 3; column++) {
-                if (board[row][column] == symbol) {
-                    count++;
-                }
+        while (true) {
+            System.out.print("Enter the coordinates: ");
+
+            String input = scanner.nextLine();
+            String[] parts = input.trim().split("\\s+");
+
+            if (parts.length != 2) {
+                System.out.println("You should enter numbers!");
+                continue;
             }
-        }
 
-        return count;
-    }
+            int row;
+            int column;
 
-    private boolean hasWinner(char symbol) {
-
-        for (int row = 0; row < 3; row++) {
-            if (board[row][0] == symbol &&
-                    board[row][1] == symbol &&
-                    board[row][2] == symbol) {
-                return true;
+            try {
+                row = Integer.parseInt(parts[0]);
+                column = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("You should enter numbers!");
+                continue;
             }
-        }
 
-        for (int column = 0; column < 3; column++) {
-            if (board[0][column] == symbol &&
-                    board[1][column] == symbol &&
-                    board[2][column] == symbol) {
-                return true;
+            if (row < 1 || row > 3 || column < 1 || column > 3) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                continue;
             }
-        }
 
-        if (board[0][0] == symbol &&
-                board[1][1] == symbol &&
-                board[2][2] == symbol) {
-            return true;
-        }
+            row--;
+            column--;
 
-        if (board[0][2] == symbol &&
-                board[1][1] == symbol &&
-                board[2][0] == symbol) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean hasEmptyCells() {
-
-        for (int row = 0; row < 3; row++) {
-            for (int column = 0; column < 3; column++) {
-                if (board[row][column] == '_') {
-                    return true;
-                }
+            if (board[row][column] != ' ') {
+                System.out.println("This cell is occupied! Choose another one!");
+                continue;
             }
+
+            board[row][column] = 'X';
+            break;
         }
-
-        return false;
-    }
-
-    public String getGameState() {
-
-        int xCount = countSymbol('X');
-        int oCount = countSymbol('O');
-
-        boolean xWins = hasWinner('X');
-        boolean oWins = hasWinner('O');
-
-        if (Math.abs(xCount - oCount) >= 2 || (xWins && oWins)) {
-            return "Impossible";
-        }
-
-        if (xWins) {
-            return "X wins";
-        }
-
-        if (oWins) {
-            return "O wins";
-        }
-
-        if (hasEmptyCells()) {
-            return "Game not finished";
-        }
-
-        return "Draw";
     }
 
     public static void main(String[] args) {
@@ -141,7 +97,8 @@ public class TicTacToe {
 
         game.printBoard();
 
-        System.out.println(game.getGameState());
-    }
+        game.makeMove(scanner);
 
+        game.printBoard();
+    }
 }
