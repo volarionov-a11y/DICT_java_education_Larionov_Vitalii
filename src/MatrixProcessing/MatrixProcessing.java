@@ -24,12 +24,21 @@ public class MatrixProcessing {
     }
 
     // Зчитування матриці з консолі
-    public static MatrixProcessing read(Scanner scanner) {
+
+    public static MatrixProcessing read(
+            Scanner scanner,
+            String sizeMessage,
+            String matrixMessage
+    ) {
+        System.out.print(sizeMessage);
+
         int rows = scanner.nextInt();
         int cols = scanner.nextInt();
 
         MatrixProcessing matrix =
                 new MatrixProcessing(rows, cols);
+
+        System.out.println(matrixMessage);
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -39,6 +48,7 @@ public class MatrixProcessing {
 
         return matrix;
     }
+
 
     // Метод додавання двох матриць
     public MatrixProcessing add(MatrixProcessing other) {
@@ -87,6 +97,39 @@ public class MatrixProcessing {
     }
 
 
+    // Множення двох матриць
+    public MatrixProcessing multiply(MatrixProcessing other) {
+
+        // Перевіряємо, чи можна перемножити матриці
+        if (cols != other.rows) {
+            throw new IllegalArgumentException(
+                    "Incompatible matrix sizes"
+            );
+        }
+
+        // Створюємо матрицю результату
+        MatrixProcessing result =
+                new MatrixProcessing(rows, other.cols);
+
+        // Перебираємо рядки першої матриці
+        for (int i = 0; i < rows; i++) {
+
+            // Перебираємо стовпці другої матриці
+            for (int j = 0; j < other.cols; j++) {
+
+                // Множимо відповідні елементи та додаємо
+                for (int k = 0; k < cols; k++) {
+                    result.data[i][j] +=
+                            data[i][k] * other.data[k][j];
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+
     // Виведення матриці
     public void print() {
         for (int i = 0; i < rows; i++) {
@@ -107,24 +150,110 @@ public class MatrixProcessing {
         }
     }
 
+    private static void showMenu() {
+
+        System.out.println("1. Add matrices");
+        System.out.println("2. Multiply matrix by a constant");
+        System.out.println("3. Multiply matrices");
+        System.out.println("0. Exit");
+
+        System.out.print("Your choice: ");
+    }
+
     // Точка входу в програму
+
+
 
     public static void main(String[] args) {
 
         Scanner scanner =
                 new Scanner(System.in).useLocale(Locale.US);
 
-        // Зчитуємо матрицю
-        MatrixProcessing matrix = read(scanner);
+        // Цикл роботи програми
+        while (true) {
 
-        // Зчитуємо константу
-        double constant = scanner.nextDouble();
+            // Виводимо меню
+            showMenu();
 
-        // Множимо матрицю на константу
-        MatrixProcessing result = matrix.multiply(constant);
+            // Зчитуємо вибір користувача
+            int choice = scanner.nextInt();
 
-        // Виводимо результат
-        result.print();
+            // Завершення програми
+            if (choice == 0) {
+                break;
+            }
+
+            try {
+                switch (choice) {
+
+                    // Додавання двох матриць
+                    case 1: {
+                        MatrixProcessing first = read(
+                                scanner,
+                                "Enter size of first matrix: ",
+                                "Enter first matrix:"
+                        );
+
+                        MatrixProcessing second = read(
+                                scanner,
+                                "Enter size of second matrix: ",
+                                "Enter second matrix:"
+                        );
+
+                        System.out.println("The result is:");
+                        first.add(second).print();
+                        break;
+                    }
+
+                    // Множення матриці на константу
+                    case 2: {
+                        MatrixProcessing matrix = read(
+                                scanner,
+                                "Enter size of matrix: ",
+                                "Enter matrix:"
+                        );
+
+                        System.out.print("Enter constant: ");
+                        double constant = scanner.nextDouble();
+
+                        System.out.println("The result is:");
+                        matrix.multiply(constant).print();
+                        break;
+                    }
+
+                    // Множення двох матриць
+                    case 3: {
+                        MatrixProcessing first = read(
+                                scanner,
+                                "Enter size of first matrix: ",
+                                "Enter first matrix:"
+                        );
+
+                        MatrixProcessing second = read(
+                                scanner,
+                                "Enter size of second matrix: ",
+                                "Enter second matrix:"
+                        );
+
+                        System.out.println("The result is:");
+                        first.multiply(second).print();
+                        break;
+                    }
+
+                    default:
+                        System.out.println("Invalid choice!");
+                }
+
+            } catch (IllegalArgumentException e) {
+                System.out.println(
+                        "The operation cannot be performed."
+                );
+            }
+
+            System.out.println();
+        }
     }
+
+
 
 }
