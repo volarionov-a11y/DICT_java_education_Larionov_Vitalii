@@ -264,11 +264,110 @@ public class MatrixProcessing {
     }
 
 
+    // Знаходження оберненої матриці методом Гауса-Жордана
+    public MatrixProcessing inverse() {
+
+        // Обернена матриця існує лише для квадратної
+        if (rows != cols) {
+            throw new IllegalArgumentException(
+                    "Matrix must be square"
+            );
+        }
+
+        int n = rows;
+
+        // Створюємо розширену матрицю [A | I]
+        // Ліва частина - початкова матриця
+        // Права частина - одинична матриця
+        double[][] augmented = new double[n][2 * n];
+
+        for (int i = 0; i < n; i++) {
+
+            // Копіюємо початкову матрицю в ліву частину
+            for (int j = 0; j < n; j++) {
+                augmented[i][j] = data[i][j];
+            }
+
+            // Створюємо одиничну матрицю справа
+            augmented[i][n + i] = 1.0;
+        }
+
+        // Метод Гауса-Жордана
+        for (int col = 0; col < n; col++) {
+
+            // Шукаємо головний елемент
+            int pivotRow = col;
+
+            for (int row = col + 1; row < n; row++) {
+                if (Math.abs(augmented[row][col]) >
+                        Math.abs(augmented[pivotRow][col])) {
+                    pivotRow = row;
+                }
+            }
+
+            // Якщо головний елемент близький до нуля,
+            // оберненої матриці не існує
+            if (Math.abs(augmented[pivotRow][col]) < 1e-12) {
+                throw new IllegalArgumentException(
+                        "This matrix doesn't have an inverse."
+                );
+            }
+
+            // Міняємо рядки місцями, якщо потрібно
+            if (pivotRow != col) {
+
+                double[] temp = augmented[col];
+                augmented[col] = augmented[pivotRow];
+                augmented[pivotRow] = temp;
+            }
+
+            // Нормалізуємо поточний рядок
+            // Головний елемент стає рівним 1
+            double pivot = augmented[col][col];
+
+            for (int j = 0; j < 2 * n; j++) {
+                augmented[col][j] /= pivot;
+            }
+
+            // Обнуляємо всі інші елементи поточного стовпця
+            for (int row = 0; row < n; row++) {
+
+                // Поточний головний рядок пропускаємо
+                if (row == col) {
+                    continue;
+                }
+
+                double factor = augmented[row][col];
+
+                for (int j = 0; j < 2 * n; j++) {
+                    augmented[row][j] -=
+                            factor * augmented[col][j];
+                }
+            }
+        }
+
+        // Тепер права частина містить обернену матрицю
+        MatrixProcessing result = new MatrixProcessing(n, n);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                result.data[i][j] = augmented[i][n + j];
+            }
+        }
+
+        // Повертаємо новий об'єкт матриці
+        return result;
+    }
+
+
+
 
 
 
     // Виведення матриці
+
     public void print() {
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
 
@@ -276,16 +375,28 @@ public class MatrixProcessing {
                     System.out.print(" ");
                 }
 
-                String value = BigDecimal.valueOf(data[i][j])
+                double value = data[i][j];
+
+                if (Math.abs(value) < 1e-10) {
+                    value = 0.0;
+                }
+
+                String formatted = BigDecimal.valueOf(value)
+                        .setScale(
+                                6,
+                                java.math.RoundingMode.HALF_UP
+                        )
                         .stripTrailingZeros()
                         .toPlainString();
 
-                System.out.print(value);
+                System.out.print(formatted);
             }
 
             System.out.println();
         }
     }
+
+
 
 
 
@@ -296,10 +407,12 @@ public class MatrixProcessing {
         System.out.println("3. Multiply matrices");
         System.out.println("4. Transpose matrix");
         System.out.println("5. Calculate a determinant");
+        System.out.println("6. Inverse matrix");
         System.out.println("0. Exit");
 
         System.out.print("Your choice: ");
     }
+
 
 
 
@@ -438,6 +551,33 @@ public class MatrixProcessing {
 
                         break;
                     }
+
+
+                    // Знаходження оберненої матриці
+                    case 6: {
+
+                        MatrixProcessing matrix = read(
+                                scanner,
+                                "Enter matrix size: ",
+                                "Enter matrix:"
+                        );
+
+                        try {
+                            // Обчислюємо обернену матрицю
+                            MatrixProcessing result = matrix.inverse();
+
+                            System.out.println("The result is:");
+                            result.print();
+
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(
+                                    "This matrix doesn't have an inverse."
+                            );
+                        }
+
+                        break;
+                    }
+
 
 
 
