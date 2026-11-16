@@ -129,6 +129,70 @@ public class MatrixProcessing {
     }
 
 
+    // Транспонування матриці
+    public MatrixProcessing transpose(int type) {
+
+        // Перевіряємо, чи вибраний правильний тип
+        if (type < 1 || type > 4) {
+            throw new IllegalArgumentException(
+                    "Invalid transpose type"
+            );
+        }
+
+        int resultRows;
+        int resultCols;
+
+        // При транспонуванні відносно діагоналей
+        // кількість рядків і стовпців міняється місцями
+        if (type == 1 || type == 2) {
+            resultRows = cols;
+            resultCols = rows;
+        } else {
+            resultRows = rows;
+            resultCols = cols;
+        }
+
+        // Створюємо нову матрицю для результату
+        MatrixProcessing result =
+                new MatrixProcessing(resultRows, resultCols);
+
+        // Проходимо всі клітинки результуючої матриці
+        for (int i = 0; i < resultRows; i++) {
+            for (int j = 0; j < resultCols; j++) {
+
+                switch (type) {
+
+                    // 1. Головна діагональ
+                    case 1:
+                        result.data[i][j] = data[j][i];
+                        break;
+
+                    // 2. Побічна діагональ
+                    case 2:
+                        result.data[i][j] =
+                                data[rows - 1 - j][cols - 1 - i];
+                        break;
+
+                    // 3. Вертикальна вісь
+                    case 3:
+                        result.data[i][j] =
+                                data[i][cols - 1 - j];
+                        break;
+
+                    // 4. Горизонтальна вісь
+                    case 4:
+                        result.data[i][j] =
+                                data[rows - 1 - i][j];
+                        break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+
 
     // Виведення матриці
     public void print() {
@@ -150,15 +214,18 @@ public class MatrixProcessing {
         }
     }
 
+
     private static void showMenu() {
 
         System.out.println("1. Add matrices");
         System.out.println("2. Multiply matrix by a constant");
         System.out.println("3. Multiply matrices");
+        System.out.println("4. Transpose matrix");
         System.out.println("0. Exit");
 
         System.out.print("Your choice: ");
     }
+
 
     // Точка входу в програму
 
@@ -239,6 +306,34 @@ public class MatrixProcessing {
                         first.multiply(second).print();
                         break;
                     }
+
+
+                    // Транспонування матриці
+                    case 4: {
+
+                        // Меню вибору способу транспонування
+                        System.out.println("1. Main diagonal");
+                        System.out.println("2. Side diagonal");
+                        System.out.println("3. Vertical line");
+                        System.out.println("4. Horizontal line");
+
+                        System.out.print("Your choice: ");
+                        int type = scanner.nextInt();
+
+                        // Зчитуємо матрицю
+                        MatrixProcessing matrix = read(
+                                scanner,
+                                "Enter matrix size: ",
+                                "Enter matrix:"
+                        );
+
+                        // Виконуємо транспонування
+                        System.out.println("The result is:");
+                        matrix.transpose(type).print();
+
+                        break;
+                    }
+
 
                     default:
                         System.out.println("Invalid choice!");
