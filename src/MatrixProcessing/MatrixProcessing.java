@@ -192,6 +192,79 @@ public class MatrixProcessing {
     }
 
 
+    // Обчислення визначника матриці методом Гауса
+    public double determinant() {
+
+        // Визначник існує тільки для квадратної матриці
+        if (rows != cols) {
+            throw new IllegalArgumentException(
+                    "Matrix must be square"
+            );
+        }
+
+        // Створюємо копію матриці
+        double[][] temp = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            temp[i] = data[i].clone();
+        }
+
+        double determinant = 1.0;
+
+        // Проходимо по стовпцях
+        for (int col = 0; col < rows; col++) {
+
+            // Шукаємо рядок із найбільшим за модулем
+            // елементом у поточному стовпці
+            int pivotRow = col;
+
+            for (int row = col + 1; row < rows; row++) {
+                if (Math.abs(temp[row][col]) >
+                        Math.abs(temp[pivotRow][col])) {
+                    pivotRow = row;
+                }
+            }
+
+            // Якщо головний елемент майже нульовий,
+            // визначник дорівнює нулю
+            if (Math.abs(temp[pivotRow][col]) < 1e-12) {
+                return 0.0;
+            }
+
+            // Міняємо рядки місцями, якщо потрібно
+            if (pivotRow != col) {
+                double[] swap = temp[col];
+                temp[col] = temp[pivotRow];
+                temp[pivotRow] = swap;
+
+                // Перестановка двох рядків змінює знак
+                determinant = -determinant;
+            }
+
+            // Головний елемент діагоналі
+            double pivot = temp[col][col];
+
+            // Множимо визначник на головний елемент
+            determinant *= pivot;
+
+            // Обнуляємо елементи під головною діагоналлю
+            for (int row = col + 1; row < rows; row++) {
+
+                double factor = temp[row][col] / pivot;
+
+                for (int j = col + 1; j < cols; j++) {
+                    temp[row][j] -= factor * temp[col][j];
+                }
+
+                temp[row][col] = 0.0;
+            }
+        }
+
+        return determinant;
+    }
+
+
+
 
 
     // Виведення матриці
@@ -215,16 +288,19 @@ public class MatrixProcessing {
     }
 
 
+
     private static void showMenu() {
 
         System.out.println("1. Add matrices");
         System.out.println("2. Multiply matrix by a constant");
         System.out.println("3. Multiply matrices");
         System.out.println("4. Transpose matrix");
+        System.out.println("5. Calculate a determinant");
         System.out.println("0. Exit");
 
         System.out.print("Your choice: ");
     }
+
 
 
     // Точка входу в програму
@@ -333,6 +409,36 @@ public class MatrixProcessing {
 
                         break;
                     }
+
+
+                    // Обчислення визначника матриці
+                    case 5: {
+
+                        MatrixProcessing matrix = read(
+                                scanner,
+                                "Enter matrix size: ",
+                                "Enter matrix:"
+                        );
+
+                        double result = matrix.determinant();
+
+                        System.out.println("The result is:");
+
+                        // Округлюємо для коректного виведення
+                        String formattedResult =
+                                BigDecimal.valueOf(result)
+                                        .setScale(
+                                                6,
+                                                java.math.RoundingMode.HALF_UP
+                                        )
+                                        .stripTrailingZeros()
+                                        .toPlainString();
+
+                        System.out.println(formattedResult);
+
+                        break;
+                    }
+
 
 
                     default:
