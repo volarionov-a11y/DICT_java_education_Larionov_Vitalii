@@ -62,6 +62,31 @@ public class MatrixProcessing {
         return result;
     }
 
+
+    // Множення матриці на константу
+    public MatrixProcessing multiply(double constant) {
+
+        // Створюємо нову матрицю такого самого розміру
+        MatrixProcessing result =
+                new MatrixProcessing(rows, cols);
+
+        // Проходимо по всіх рядках
+        for (int i = 0; i < rows; i++) {
+
+            // Проходимо по всіх стовпцях
+            for (int j = 0; j < cols; j++) {
+
+                // Множимо кожен елемент на константу
+                result.data[i][j] =
+                        data[i][j] * constant;
+            }
+        }
+
+        // Повертаємо новий об'єкт із результатом
+        return result;
+    }
+
+
     // Виведення матриці
     public void print() {
         for (int i = 0; i < rows; i++) {
@@ -83,19 +108,23 @@ public class MatrixProcessing {
     }
 
     // Точка входу в програму
+
     public static void main(String[] args) {
+
         Scanner scanner =
                 new Scanner(System.in).useLocale(Locale.US);
 
-        MatrixProcessing first = read(scanner);
-        MatrixProcessing second = read(scanner);
+        // Зчитуємо матрицю
+        MatrixProcessing matrix = read(scanner);
 
-        try {
-            MatrixProcessing result = first.add(second);
-            result.print();
+        // Зчитуємо константу
+        double constant = scanner.nextDouble();
 
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR");
-        }
+        // Множимо матрицю на константу
+        MatrixProcessing result = matrix.multiply(constant);
+
+        // Виводимо результат
+        result.print();
     }
+
 }
